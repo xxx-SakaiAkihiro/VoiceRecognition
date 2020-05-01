@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Voice Recognition</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="favicon.ico">
+  <link href="https://fonts.googleapis.com/css?family=M+PLUS+Rounded+1c" rel="stylesheet">
+  <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
+  <script defer src="https://use.fontawesome.com/releases/v5.13.0/js/all.js"></script>
+
+</head>
+
+<body>
+
+  <!-- ヘッダー -->
+  <header>
+    <div class="back-color">
+      <h1>音声認識・議事録</h1>
+    </div>
+  </header>
+
+
+  <section>
+    <!-- タブ全体 -->
+    <div class="main-area">
+      <!-- タブのボタン部分 -->
+      <div class="tab">
+        <a class="tab_btn" href="#item1">リスト</a>
+        <a class="tab_btn" href="#item2">ボイス</a>
+        <a class="tab_btn" href="#item3">使い方</a>
+      </div>
+
+      <!-- タブ全体 -->
+      <div class="tab_item_box">
+        <!-- リストタブ -->
+        <div class="tab_item is-active-item" id="item1">
+          <div>2020/04/21 なんたらかんたら</div>
+          <div>2020/04/21 なんたらかんたら</div>
+          <div>2020/04/21 なんたらかんたら</div>
+        </div>
+        <!-- ボイスタブ -->
+        <div class="tab_item" id="item2">
+          <!-- コメント表示 -->
+          <section id="comment">
+            <div>
+              <span id="final_comment"></span>
+              <span id="interim_comment"></span>
+            </div>
+          </section>
+
+          <!-- 状況 -->
+          <div id="status" cols="100" rows="1">
+          </div>
+
+          <!-- ボタン表示 -->
+          <section class="btn">
+            <!-- スタートボタン -->
+            <button id="start_btn" class="btn-css">
+              <i class="fas fa-microphone"></i>
+            </button>
+            <!-- ストップボタン -->
+            <button id="stop_btn" class="btn-css">
+              <i class="fas fa-stop"></i>
+            </button>
+
+          </section>
+        </div>
+        <!-- 使い方タブ -->
+        <div class="tab_item" id="item3">
+          <div>
+            使い方
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- フッター -->
+  <footer>
+    <img src="img/チョコミント.png">
+    <p>AKIHIRO SAKAI</p>
+  </footer>
+
+
+  <!-- 以下、Script -->
+
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+    crossorigin="anonymous">
+    </script>
+
+  <!-- 音声認識 -->
+  <script>
+    "use strict"; {
+      const startBtn = document.getElementById("start_btn");
+      const stopBtn = document.getElementById("stop_btn");
+      const content = document.getElementById('content');
+      const speech = new webkitSpeechRecognition();
+      speech.lang = "ja-JP"; // 言語設定
+      speech.interimResults = true; // 暫定的な結果を返す(true)、そうでないか(false) 
+      speech.continuous = true // 認識結果を継続的で返す(true)、単一で返す(false)
+
+      // スタートボタンを押した時
+      startBtn.addEventListener("click", () => {
+        speech.start();
+      });
+
+      // ストップボタンを押した時
+      stopBtn.addEventListener("click", () => {
+        speech.stop();
+      });
+
+      // 何らかの音が鳴った時に発火
+      speech.onsoundstart = function () {
+        document.getElementById('status').innerHTML = "認識中";
+      };
+
+      // 音声認識サービスが意味を認識できない最終結果を返した時に発火
+      speech.onnomatch = function () {
+        document.getElementById('status').innerHTML = "もう一度試してください";
+      };
+
+      // 音声認識でエラーが起こった時に発火
+      speech.onerror = function () {
+        document.getElementById('status').innerHTML = "エラー";
+      };
+
+      // 何らかの音が鳴り止んだ時に発火
+      speech.onsoundend = function () {
+        document.getElementById('status').innerHTML = "停止中";
+      };
+
+      // 音声認識サービスが結果を返した時に動く(通常動作)
+      speech.onresult = (e) => {
+        var final = "";
+        var interim = "";
+        var results = event.results;
+        for (var i = 0; i < results.length; i++) {
+          if (results[i].isFinal) {
+            final += results[i][0].transcript;
+          }
+          else {
+            interim += "　" + results[i][0].transcript;
+          }
+        }
+        final_comment.innerHTML = final;
+        interim_comment.innerHTML = interim;
+      }
+
+    }
+  </script>
+
+
+  <!-- タブ表示 -->
+  <script>
+    $(function () {
+      /*クリックイベント*/
+      $('.tab_btn').on('click', function () {
+        /* 一旦.tab_itemから.is-active-itemを外す */
+        $('.tab_item').removeClass("is-active-item");
+        /* クリックした.tab_btnに対応する.tab_itemに.is-active-itemをつける */
+        $($(this).attr("href")).addClass("is-active-item");
+      });
+    });
+  </script>
+
+  <!-- タブ選択時の色変え -->
+  <script>
+    $(function () {
+      $(".tab a").click(function () {
+        $(".tab a.selected").removeClass("selected");
+        $(this).addClass("selected");
+      });
+    });
+  </script>
+
+</body>
+
+</html>
