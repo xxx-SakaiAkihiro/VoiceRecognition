@@ -36,7 +36,7 @@
       <div class="tab_item_box">
         <!-- リストタブ -->
         <div class="tab_item is-active-item" id="item1">
-          <div>2020/04/21 なんたらかんたら</div>
+          <div id="inter">2020/04/21 なんたらかんたら</div>
           <div>2020/04/21 なんたらかんたら</div>
           <div>2020/04/21 なんたらかんたら</div>
         </div>
@@ -154,7 +154,6 @@
     }
   </script>
 
-
   <!-- タブ表示 -->
   <script>
     $(function () {
@@ -177,6 +176,27 @@
       });
     });
   </script>
+
+  <!-- リストに表示 -->
+  <script>
+    stop_btn.addEventListener("click", function () {
+      //入力されたデータを取得
+      var comment = document.getElementById("final_comment").textContent;
+      //JSONデータに変換して登録する
+      window.localStorage.setItem("setcomment", JSON.stringify(comment));
+      //データを表示
+      display();
+    })
+
+    //表示する処理
+    function display() {
+      //JSONデータに戻してから取得する
+      var displaycomment = JSON.parse(window.localStorage.getItem("setcomment"));
+      document.getElementById("inter").innerHTML = displaycomment;
+      console.log(displaycomment);
+    }
+  </script>
+
 
 </body>
 
